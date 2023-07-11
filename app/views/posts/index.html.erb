@@ -1,0 +1,37 @@
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <% @posts.each do |post| %>
+        <div class="card mb-3">
+          <div class="card-body text-center"> <!-- Alineación del texto al centro -->
+            <p class="card-text"><%= post.content %></p>
+            <p class="card-text">Hecho por: <%= post.user.email %></p>
+            <p class="card-text"><%= post.likes.count %> Likes</p>
+            <div class="d-flex justify-content-end"> <!-- Alineación de los botones a la derecha -->
+              <%= form_with url: likes_path(post_id: post.id), method: :post, class: 'mr-2' do |form| %>
+                <%= form.submit 'Like', class: 'btn btn-primary' %>
+              <% end %>
+              <%= link_to 'Edit', edit_post_path(post), class: 'btn btn-secondary mr-2' %>
+              <%= link_to 'Delete', post_path(post), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+            </div>
+            <!-- Comentarios -->
+            <% post.comments.each do |comment| %>
+              <p><strong><%= comment.user.email %>:</strong> <%= comment.content %></p>
+            <% end %>
+
+            <!-- Formulario para agregar comentarios -->
+            <%= form_with(model: [post, Comment.new], local: true) do |form| %>
+              <div class="form-group">
+                <%= form.text_area :content, placeholder: 'Agrega un comentario', class: 'form-control' %>
+              </div>
+              <%= form.submit 'Publicar', class: 'btn btn-primary mt-3' %>
+
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<%= link_to 'New Post', new_post_path, class: 'btn btn-success' %>
